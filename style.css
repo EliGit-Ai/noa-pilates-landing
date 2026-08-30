@@ -89,15 +89,12 @@ main {
   padding-bottom: 0;
 }
 
-.image-placeholder {
+.studio-photo {
+  display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  background-color: #D8D3CA;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 
 /* פרטים מעשיים */
