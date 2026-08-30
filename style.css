@@ -1,0 +1,217 @@
+/* ---------------------------------------------
+   פלטת צבעים: סטודיו פילאטיס, אווירה רגועה וטבעית.
+   ירוק מרווה כצבע עיקרי (רוגע, בריאות, תנועה),
+   בז'/שמנת ברקע (חם, לא קליני), חימר כאדום אפרסק
+   לקריאה לפעולה (חמים ומזמין, בלי להיות תוסס מדי).
+   טקסט בחום פחם רך במקום שחור מלא, לתחושה נעימה.
+   --------------------------------------------- */
+:root {
+  --color-bg: #F7F3EC;
+  --color-bg-alt: #EFE9DE;
+  --color-text: #3B3733;
+  --color-text-muted: #6E675E;
+  --color-primary: #7C8F6E;
+  --color-primary-dark: #64735A;
+  --color-accent: #C97B5C;
+  --color-border: #E2DACD;
+
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-body: -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+  line-height: 1.3;
+  margin: 0 0 0.5em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--color-primary-dark);
+}
+
+section, header, footer {
+  padding: 2.5rem 1.25rem;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* כותרת */
+
+.hero {
+  text-align: center;
+  background-color: var(--color-bg-alt);
+}
+
+.business-name {
+  font-size: 1.9rem;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* אודות */
+
+.about h2,
+.details h2,
+.contact-form h2,
+.contact-info h2 {
+  font-size: 1.4rem;
+}
+
+/* תמונה */
+
+.image-feature {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.image-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #D8D3CA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* פרטים מעשיים */
+
+.details {
+  background-color: var(--color-bg-alt);
+}
+
+.detail {
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail:last-child {
+  border-bottom: none;
+}
+
+.detail h3 {
+  font-size: 1.05rem;
+  color: var(--color-primary-dark);
+}
+
+.detail p {
+  margin: 0;
+  color: var(--color-text);
+}
+
+/* טופס */
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact-form label {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-top: 0.75rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  color: var(--color-text);
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form button {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  align-self: stretch;
+}
+
+.contact-form button:hover {
+  background-color: #B5694C;
+}
+
+/* יצירת קשר */
+
+.contact-info {
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+}
+
+.contact-info p {
+  margin: 0 0 0.4em;
+}
+
+/* דסקטופ */
+
+@media (min-width: 700px) {
+  body {
+    font-size: 18px;
+  }
+
+  main {
+    max-width: 760px;
+  }
+
+  section, header, footer {
+    padding: 3.5rem 2rem;
+  }
+
+  .business-name {
+    font-size: 2.4rem;
+  }
+
+  .tagline {
+    font-size: 1.25rem;
+  }
+
+  .contact-form form {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .contact-form button {
+    align-self: center;
+    padding-inline: 3rem;
+  }
+}
