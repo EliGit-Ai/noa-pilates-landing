@@ -168,6 +168,25 @@ main {
   background-color: #B5694C;
 }
 
+.contact-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-status {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  min-height: 1.3em;
+}
+
+.form-status--success {
+  color: var(--color-primary-dark);
+}
+
+.form-status--error {
+  color: var(--color-accent);
+}
+
 /* יצירת קשר */
 
 .contact-info {

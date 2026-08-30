@@ -79,8 +79,7 @@
 
     <section class="contact-form">
       <h2>השארת פרטים</h2>
-      <!-- הטופס אינו מחובר ליעד שליחה, יחובר בהמשך -->
-      <form>
+      <form id="contact-form">
         <label for="name">שם מלא</label>
         <input type="text" id="name" name="name" required>
 
@@ -94,6 +93,7 @@
         <textarea id="message" name="message" rows="4"></textarea>
 
         <button type="submit">שליחה</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
       </form>
     </section>
 
@@ -105,6 +105,47 @@
     <p><a href="tel:0520000000">052-000-0000</a></p>
     <p><a href="mailto:noa@example.co.il">noa@example.co.il</a></p>
   </footer>
+
+  <script>
+    var CONTACT_ENDPOINT = 'https://elik.app.n8n.cloud/webhook/noa-pilates-contact';
+
+    document.getElementById('contact-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      var form = event.target;
+      var button = form.querySelector('button');
+      var status = form.querySelector('.form-status');
+
+      var payload = {
+        name: form.name.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        message: form.message.value
+      };
+
+      button.disabled = true;
+      status.className = 'form-status';
+      status.textContent = 'שולח...';
+
+      fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (response) {
+          if (!response.ok) { throw new Error('שגיאת שרת'); }
+          form.reset();
+          status.className = 'form-status form-status--success';
+          status.textContent = 'הפנייה נשלחה, תודה. נחזור אליך בהקדם.';
+        })
+        .catch(function () {
+          status.className = 'form-status form-status--error';
+          status.textContent = 'אירעה שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בטלפון.';
+        })
+        .finally(function () {
+          button.disabled = false;
+        });
+    });
+  </script>
 
 </body>
 </html>
