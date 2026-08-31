@@ -97,8 +97,8 @@
         <textarea id="message" name="message" rows="4"></textarea>
 
         <button type="submit">שליחה</button>
-        <p class="form-status" role="status" aria-live="polite"></p>
       </form>
+      <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
     </section>
 
   </main>
@@ -117,7 +117,7 @@
       event.preventDefault();
       var form = event.target;
       var button = form.querySelector('button');
-      var status = form.querySelector('.form-status');
+      var status = document.getElementById('form-status');
 
       var payload = {
         name: form.name.value,
@@ -137,6 +137,7 @@
         .then(function (response) {
           if (!response.ok) { throw new Error('שגיאת שרת'); }
           form.reset();
+          form.hidden = true;
           status.className = 'form-status form-status--success';
           status.textContent = 'הפנייה נשלחה, תודה. נחזור אליך בהקדם.';
         })
