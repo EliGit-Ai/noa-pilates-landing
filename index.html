@@ -128,8 +128,7 @@
 
       fetch(CONTACT_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: new URLSearchParams(payload)
       })
         .then(function (response) {
           if (!response.ok) { throw new Error('שגיאת שרת'); }
