@@ -1,91 +1,146 @@
 /* ---------------------------------------------
-   פלטת צבעים: סטודיו פילאטיס, אווירה רגועה וטבעית.
-   ירוק מרווה כצבע עיקרי (רוגע, בריאות, תנועה),
-   בז'/שמנת ברקע (חם, לא קליני), חימר כאדום אפרסק
-   לקריאה לפעולה (חמים ומזמין, בלי להיות תוסס מדי).
-   טקסט בחום פחם רך במקום שחור מלא, לתחושה נעימה.
+   נועה פילאטיס — שפה חזותית "לפנות בוקר"
+   חושך חם של סטודיו לפני שיעור הבוקר. שנהב לטקסט, זהב-שחר לפעולות.
    --------------------------------------------- */
 :root {
-  --color-bg: #F7F3EC;
-  --color-bg-alt: #EFE9DE;
-  --color-text: #3B3733;
-  --color-text-muted: #6E675E;
-  --color-primary: #7C8F6E;
-  --color-primary-dark: #64735A;
-  --color-accent: #C97B5C;
-  --color-border: #E2DACD;
+  --night: #16110e;
+  --night-soft: #1f1813;
+  --night-lift: #2a2018;
+  --seam: #3b2d21;
+  --ivory: #f1e8db;
+  --ivory-dim: #bcab93;
+  --dusk: #8b7a64;
+  --dawn: #e2a45c;
+  --dawn-bright: #eebd7e;
+  --ember: #c46f52;
 
-  --font-heading: Georgia, 'Times New Roman', serif;
-  --font-body: -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;
+  /* נכתב ע"י JS: 0 בסוף נשיפה, 1 בשיא שאיפה */
+  --breath: 0;
+  /* נכתב ע"י JS לפי גלילה: 0 למעלה, 1 בהרשמה */
+  --sunrise: 0;
+
+  --font-display: 'Frank Ruhl Libre', Georgia, serif;
+  --font-body: 'Assistant', -apple-system, 'Segoe UI', Tahoma, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+html { background: var(--night); }
 
 body {
+  isolation: isolate;
   margin: 0;
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background: var(--night);
+  color: var(--ivory);
   font-family: var(--font-body);
   font-size: 17px;
-  line-height: 1.7;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--sunrise);
+  background:
+    radial-gradient(ellipse 120% 55% at 50% 108%, color-mix(in srgb, var(--dawn) 26%, transparent) 0%, color-mix(in srgb, var(--ember) 12%, transparent) 45%, transparent 75%),
+    linear-gradient(to top, color-mix(in srgb, var(--night-lift) 80%, var(--dawn) 20%) 0%, transparent 60%);
+  transition: opacity 0.2s linear;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
 }
 
 h1, h2, h3 {
-  font-family: var(--font-heading);
-  color: var(--color-text);
-  line-height: 1.3;
-  margin: 0 0 0.5em;
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  margin: 0;
 }
 
-p {
-  margin: 0 0 1em;
+p { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+
+::selection {
+  background: color-mix(in srgb, var(--dawn) 40%, transparent);
+  color: var(--ivory);
 }
 
-a {
-  color: var(--color-primary-dark);
+:focus-visible {
+  outline: 2px solid var(--dawn);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-section, header, footer {
-  padding: 2.5rem 1.25rem;
+.skip-link {
+  position: absolute;
+  top: -100px;
+  right: 1rem;
+  z-index: 999;
+  background: var(--dawn);
+  color: var(--night);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  transition: top 0.2s;
 }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
+.skip-link:focus { top: 1rem; }
+
+.text-dawn { color: var(--dawn); }
+
+/* אור נר עוקב עכבר */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  height: 680px;
+  width: 680px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s;
+  background: radial-gradient(circle, color-mix(in srgb, var(--dawn) 9%, transparent) 0%, color-mix(in srgb, var(--ember) 4%, transparent) 38%, transparent 68%);
+  mix-blend-mode: screen;
+  transform: translate3d(-340px, -340px, 0);
 }
 
 /* הודעת עדכון */
-
 .announcement {
-  background-color: var(--color-accent);
-  color: #FFFFFF;
+  position: relative;
+  z-index: 41;
+  background-color: var(--ember);
+  color: var(--ivory);
   text-align: center;
   padding: 0.9rem 1.25rem;
 }
 
 .announcement p {
-  margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.6;
 }
 
-/* כותרת */
+/* ---------------- כותרת ---------------- */
 
 .hero {
-  --hero-bg: #16110E;
-  --hero-ivory: #F3EEE4;
-  --hero-gold: #E2A45D;
-  --hero-line: rgba(226, 164, 93, 0.35);
   position: relative;
   display: flex;
   flex-direction: column;
   min-height: calc(100dvh - 6rem);
-  padding: 0;
   overflow: hidden;
-  text-align: center;
-  background-color: var(--hero-bg);
 }
 
 .hero-canvas-wrap {
@@ -100,277 +155,882 @@ main {
   inset: 0;
   width: 100%;
   height: 100%;
-}
-
-.visually-hidden {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  pointer-events: none;
 }
 
 .hero-content {
   flex-shrink: 0;
-  padding: 0 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem 2.5rem;
+  text-align: center;
 }
 
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rise-in { animation: rise-in 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+
 .hero-kicker {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 0.75rem;
-  margin: 0 0 1rem;
-  color: var(--hero-gold);
-  font-size: 0.8rem;
-  letter-spacing: 0.4em;
+  font-size: 13px;
+  letter-spacing: 0.42em;
+  color: var(--dusk);
 }
 
 .hero-kicker-line {
-  width: 2rem;
   height: 1px;
-  background: linear-gradient(to left, var(--hero-line), transparent);
+  width: 2rem;
 }
 
-.hero-kicker-line:last-child {
-  background: linear-gradient(to right, var(--hero-line), transparent);
+.hero-kicker-line--start { background: linear-gradient(to left, color-mix(in srgb, var(--dusk) 60%, transparent), transparent); }
+.hero-kicker-line--end { background: linear-gradient(to right, color-mix(in srgb, var(--dusk) 60%, transparent), transparent); }
+
+.hero-kicker-word-wrap {
+  position: relative;
+  display: inline-block;
+  height: 1.4em;
+  min-width: 4.5em;
 }
 
 .hero-kicker-word {
-  display: inline-block;
-  min-width: 4em;
-  transition: opacity 0.5s ease;
-}
-
-.hero-kicker-word.is-swapping {
-  opacity: 0;
-}
-
-.tagline {
-  font-size: 1.1rem;
-  color: var(--hero-ivory);
-  margin: 0;
-}
-
-.hero-scroll-hint {
   position: absolute;
-  bottom: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--hero-gold);
-  opacity: 0.7;
-  animation: hero-scroll-bounce 2.2s ease-in-out infinite;
+  inset: 0;
+  transition: opacity 1s;
 }
 
-@keyframes hero-scroll-bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
+#kicker-exhale { opacity: 0; }
+
+.hero-title {
+  margin-top: 1.25rem;
+  font-size: 2.5rem;
+  line-height: 1.15;
+  color: var(--ivory);
+  text-wrap: balance;
 }
 
-/* תג הלוגו */
+.hero-lede {
+  margin: 1.5rem auto 0;
+  max-width: 34rem;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+  text-wrap: balance;
+}
 
-.brand-badge {
-  position: fixed;
-  left: 1.1rem;
-  bottom: 1.1rem;
-  z-index: 30;
+.hero-actions {
+  margin-top: 2rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: 3.4rem;
-  height: 3.4rem;
-  border-radius: 50%;
-  background-color: #2A2018;
-  border: 1px solid rgba(226, 164, 93, 0.35);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  gap: 1rem;
 }
 
-.brand-badge-glyph {
-  height: 1.5rem;
-  width: auto;
-  display: block;
-}
-
-@media (max-width: 640px) {
-  .brand-badge {
-    width: 2.8rem;
-    height: 2.8rem;
-    left: 0.85rem;
-    bottom: 0.85rem;
-  }
-
-  .brand-badge-glyph {
-    height: 1.2rem;
-  }
-}
-
-/* אודות */
-
-.about h2,
-.details h2,
-.contact-form h2,
-.contact-info h2 {
-  font-size: 1.4rem;
-}
-
-/* תמונה */
-
-.image-feature {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.studio-photo {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-/* פרטים מעשיים */
-
-.details {
-  background-color: var(--color-bg-alt);
-}
-
-.detail {
-  padding-block: 1.25rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.detail:last-child {
-  border-bottom: none;
-}
-
-.detail h3 {
-  font-size: 1.05rem;
-  color: var(--color-primary-dark);
-}
-
-.detail p {
-  margin: 0;
-  color: var(--color-text);
-}
-
-/* טופס */
-
-.contact-form form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.contact-form form[hidden] {
-  display: none;
-}
-
-.contact-form label {
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-  margin-top: 0.75rem;
-}
-
-.contact-form input,
-.contact-form textarea {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  padding: 0.7rem 0.8rem;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background-color: #FFFFFF;
-  color: var(--color-text);
-}
-
-.contact-form textarea {
-  resize: vertical;
-}
-
-.contact-form button {
-  margin-top: 1.5rem;
-  padding: 0.85rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  background-color: var(--color-accent);
-  color: #FFFFFF;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.85rem 2rem;
   font-size: 1rem;
   font-family: var(--font-body);
   cursor: pointer;
-  align-self: stretch;
+  border: none;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  will-change: transform;
 }
 
-.contact-form button:hover {
-  background-color: #B5694C;
+.btn--primary {
+  background: var(--dawn);
+  color: var(--night);
+  font-weight: 600;
 }
 
-.contact-form button:disabled {
-  opacity: 0.6;
-  cursor: default;
+.btn--primary:hover { background: var(--dawn-bright); }
+
+.btn--quiet {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--dusk) 40%, transparent);
+  color: var(--ivory-dim);
 }
 
-.form-status {
-  margin: 0.75rem 0 0;
-  font-size: 0.95rem;
-  min-height: 1.3em;
+.btn--quiet:hover {
+  border-color: color-mix(in srgb, var(--dawn) 60%, transparent);
+  color: var(--ivory);
 }
 
-.form-status--success {
-  color: var(--color-primary-dark);
+.breathes-glow {
+  box-shadow:
+    0 0 calc(18px + var(--breath) * 26px) color-mix(in srgb, var(--dawn) calc(18% + var(--breath) * 22%), transparent),
+    0 6px 24px -8px rgba(0, 0, 0, 0.6);
 }
 
-.form-status--error {
-  color: var(--color-accent);
+.hero-flash {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.9rem;
 }
 
-/* יצירת קשר */
+.hero-flash-tag {
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--dawn);
+}
 
-.contact-info {
+.hero-flash-detail { color: var(--ivory-dim); }
+
+.hero-flash-link {
+  font-weight: 600;
+  color: var(--dawn);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.3s;
+}
+
+.hero-flash:hover .hero-flash-link { color: var(--dawn-bright); }
+
+.hero-scroll-hint {
+  flex-shrink: 0;
+  padding-bottom: 1.5rem;
   text-align: center;
-  border-top: 1px solid var(--color-border);
+  color: var(--dusk);
 }
 
-.contact-info p {
-  margin: 0 0 0.4em;
+@keyframes drift-down {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(7px); opacity: 1; }
 }
 
-/* דסקטופ */
+.drift-down { animation: drift-down 4s ease-in-out infinite; }
+
+/* ---------------- ניווט הנשימה ---------------- */
+
+.breath-nav-mobile {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid color-mix(in srgb, var(--seam) 70%, transparent);
+  background: color-mix(in srgb, var(--night) 85%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.breath-nav-mobile ul {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.6rem 1rem;
+  margin: 0;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.breath-nav-mobile ul::-webkit-scrollbar { display: none; }
+
+.breath-nav-mobile a {
+  display: block;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.breath-nav-mobile a:hover { color: var(--ivory); }
+
+.breath-nav-mobile a.is-active {
+  background: var(--dawn);
+  color: var(--night);
+  font-weight: 600;
+}
+
+.breath-nav-desktop {
+  display: none;
+  position: fixed;
+  top: 50%;
+  right: 2rem;
+  z-index: 40;
+  transform: translateY(-50%);
+}
+
+.breath-nav-desktop ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.breath-nav-desktop a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.breath-nav-desktop .dot {
+  height: 9px;
+  width: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--dusk) 50%, transparent);
+  transition: all 0.3s;
+}
+
+.breath-nav-desktop .label {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  color: var(--dusk);
+  transition: color 0.3s;
+}
+
+.breath-nav-desktop a:hover .dot { background: var(--dusk); }
+.breath-nav-desktop a:hover .label { color: var(--ivory-dim); }
+
+.breath-nav-desktop a.is-active .dot {
+  transform: scale(1.25);
+  background: var(--dawn);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dawn) 60%, transparent);
+}
+
+.breath-nav-desktop a.is-active .label { color: var(--ivory); }
+
+/* ---------------- מבנה סקשן ---------------- */
+
+.section { scroll-margin-top: 5rem; padding-bottom: 5rem; }
+
+.divider-wrap { padding: 3.5rem 0; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0 1.5rem;
+}
+
+.divider-line {
+  height: 1px;
+  max-width: 10rem;
+  flex: 1;
+  background: linear-gradient(to left, transparent, color-mix(in srgb, var(--dusk) 50%, transparent));
+}
+
+.divider-line:last-child {
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--dusk) 50%, transparent));
+}
+
+.divider-glyph { flex-shrink: 0; color: var(--dusk); }
+
+.breathes { transform: scale(calc(1 + var(--breath) * 0.045)); }
+
+.section-inner {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-inner--wide { max-width: 64rem; }
+.section-inner--centered { text-align: center; }
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.34em;
+  color: var(--dawn);
+}
+
+.section-title {
+  margin-bottom: 2.25rem;
+  font-size: 2rem;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal.is-shown { opacity: 1; transform: translateY(0); }
+.reveal--delayed.is-shown { transition-delay: 0.12s; }
+
+/* ---------------- מי אנחנו ---------------- */
+
+.about-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.about-copy {
+  max-width: 34rem;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.about-quote {
+  border-right: 2px solid color-mix(in srgb, var(--dawn) 50%, transparent);
+  padding-right: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--ivory);
+}
+
+.photo-warm {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.9rem;
+  border: 1px solid var(--seam);
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.7);
+}
+
+.photo-warm img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.14) saturate(0.94) brightness(0.94);
+}
+
+.photo-warm::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--night) 34%, transparent) 0%, transparent 32%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dawn) 10%, transparent);
+}
+
+.about-photo { aspect-ratio: 4 / 3; }
+.place-photo { aspect-ratio: 16 / 9; margin-bottom: 2.25rem; }
+
+/* ---------------- שיעורים ---------------- */
+
+.class-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--seam);
+  border-bottom: 1px solid var(--seam);
+}
+
+.class-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--seam);
+}
+
+.class-item:last-child { border-bottom: none; }
+
+.class-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
+.class-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.2rem;
+  color: var(--ivory);
+}
+
+.class-time { color: var(--ivory-dim); }
+
+.class-note { margin-top: 0.5rem; color: var(--ivory-dim); }
+.class-note a { color: var(--dawn); text-decoration: underline; text-underline-offset: 4px; }
+.class-note a:hover { color: var(--dawn-bright); }
+
+.badge-new {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--dawn);
+  color: var(--night);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  animation: badge-pulse 3s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 80%, 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--dawn) 30%, transparent); }
+  90% { transform: scale(1.03); box-shadow: 0 0 0 4px color-mix(in srgb, var(--dawn) 0%, transparent); }
+}
+
+.classes-phone-note { margin-top: 1.5rem; color: var(--ivory-dim); }
+.classes-phone-note a { color: var(--dawn); text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---------------- קבוצת הבוקר ---------------- */
+
+.group-lede {
+  max-width: 30rem;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+  text-wrap: balance;
+}
+
+.group-card {
+  margin: 3rem auto 0;
+  max-width: 46rem;
+  border-radius: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--dawn) 25%, transparent);
+  background: color-mix(in srgb, var(--night-soft) 70%, transparent);
+  padding: 2.5rem 1.5rem;
+}
+
+.breath-ring {
+  box-shadow: 0 0 0 calc(1px + var(--breath) * 5px) color-mix(in srgb, var(--dawn) calc(30% - var(--breath) * 18%), transparent);
+}
+
+.group-stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem 1.5rem;
+}
+
+.group-stats dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 300;
+  color: var(--dawn);
+  font-variant-numeric: tabular-nums;
+}
+
+.group-stats dt {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+}
+
+.group-footnote {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--seam);
+  color: var(--ivory-dim);
+}
+
+.group-cta { margin-top: 2.5rem; }
+
+/* ---------------- למי זה מתאים ---------------- */
+
+.who-lede {
+  max-width: 34rem;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+}
+
+/* ---------------- נועה ---------------- */
+
+.noa-quote-wrap { max-width: 40rem; }
+
+.noa-quote {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--ivory);
+}
+
+.quote-mark { color: var(--dawn); }
+
+.noa-signature {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+}
+
+/* ---------------- המקום ---------------- */
+
+.facts-grid {
+  margin: 0;
+  display: grid;
+  gap: 1rem 2rem;
+}
+
+.facts-grid > div {
+  border-bottom: 1px solid var(--seam);
+  padding-bottom: 0.75rem;
+}
+
+.facts-grid dt { font-size: 0.85rem; color: var(--dusk); }
+.facts-grid dd { margin: 0.25rem 0 0; color: var(--ivory); }
+
+.place-subtitle {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+  color: var(--ivory);
+}
+
+.bring-list {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bring-list li {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  color: var(--ivory);
+}
+
+.bring-list-dim { color: var(--ivory-dim); }
+.bring-mark { color: var(--dawn); }
+.bring-mark--dim { color: color-mix(in srgb, var(--dawn) 60%, transparent); }
+
+.place-medical {
+  margin-top: 2.25rem;
+  border-right: 2px solid color-mix(in srgb, var(--dawn) 40%, transparent);
+  padding-right: 1rem;
+  color: var(--ivory-dim);
+}
+
+/* ---------------- שאלות ---------------- */
+
+.faq-list {
+  border-top: 1px solid var(--seam);
+  border-bottom: 1px solid var(--seam);
+}
+
+.faq-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--seam);
+}
+
+.faq-item:last-child { border-bottom: none; }
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.1rem;
+  color: var(--ivory);
+  transition: color 0.2s;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--dawn-bright); }
+
+.faq-plus {
+  flex-shrink: 0;
+  color: var(--dawn);
+  transition: transform 0.2s;
+}
+
+.faq-item[open] .faq-plus { transform: rotate(45deg); }
+
+.faq-item p {
+  margin-top: 0.75rem;
+  color: var(--ivory-dim);
+}
+
+/* ---------------- הרשמה ---------------- */
+
+.register-lede {
+  max-width: 30rem;
+  margin-bottom: 2.25rem;
+  font-size: 1.1rem;
+  color: var(--ivory-dim);
+}
+
+.register-card {
+  border-radius: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--dawn) 20%, transparent);
+  background: color-mix(in srgb, var(--night-soft) 70%, transparent);
+  padding: 1.5rem;
+}
+
+.honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+#register-form { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.field-group { border: none; margin: 0; padding: 0; }
+
+.field-group legend, .field > label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+  padding: 0;
+}
+
+.radio-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.radio-pill {
+  position: relative;
+  flex: 1 1 10rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--seam);
+  background: var(--night);
+  color: var(--ivory);
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.radio-pill input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.radio-pill:has(input:checked) {
+  border-color: var(--dawn);
+  background: var(--night-lift);
+}
+
+.radio-pill:has(input:focus-visible) {
+  outline: 2px solid var(--dawn);
+  outline-offset: 2px;
+}
+
+.radio-pill--highlight { border-color: color-mix(in srgb, var(--dawn) 40%, transparent); }
+
+.option-breath {
+  box-shadow: 0 0 0 calc(1px + var(--breath) * 5px) color-mix(in srgb, var(--dawn) calc(30% - var(--breath) * 18%), transparent);
+}
+
+.radio-pill:has(input:checked).option-breath { box-shadow: none; }
+
+.radio-pill-sub { font-size: 0.85rem; color: var(--ivory-dim); }
+
+.radio-pill-flag {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--dawn);
+  text-align: center;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.phone-row select,
+.phone-row input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--seam);
+  background: var(--night);
+  color: var(--ivory);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.field input::placeholder { color: color-mix(in srgb, var(--dusk) 60%, transparent); }
+.field input:focus, .phone-row select:focus, .phone-row input:focus {
+  outline: none;
+  border-color: var(--dawn);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--dawn) 40%, transparent);
+}
+
+.phone-row { display: flex; gap: 0.5rem; }
+.phone-row select { width: 6rem; text-align: center; flex-shrink: 0; }
+.phone-row input { flex: 1; min-width: 0; text-align: left; }
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--seam);
+  background: var(--night);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.checkbox-row input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--dawn);
+}
+
+.checkbox-row span { font-size: 0.9rem; color: var(--ivory-dim); }
+
+.field-error { margin-top: 0.4rem; font-size: 0.85rem; color: var(--ember); }
+
+.form-server-error {
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ember) 40%, transparent);
+  background: var(--night-lift);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+}
+
+.submit-row { display: flex; justify-content: center; }
+.submit-row .btn { width: 100%; }
+
+.register-success .success-tag {
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--dawn);
+}
+
+.success-title { margin-top: 0.5rem; font-size: 1.6rem; color: var(--ivory); }
+
+.success-details {
+  margin: 1.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--ivory-dim);
+}
+
+.success-details dd { margin: 0; }
+
+.success-medical {
+  margin-top: 1.5rem;
+  border-right: 2px solid color-mix(in srgb, var(--dawn) 40%, transparent);
+  padding-right: 1rem;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+}
+
+.success-phone { margin-top: 1.5rem; font-size: 0.9rem; color: var(--dusk); }
+
+/* ---------------- פוטר ---------------- */
+
+.site-footer {
+  border-top: 1px solid var(--seam);
+  padding: 3.5rem 0;
+}
+
+.footer-name { font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory); }
+.footer-address { margin-top: 0.5rem; color: var(--ivory-dim); }
+
+.footer-links {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: var(--dawn);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--dawn-bright); }
+
+.footer-credit { margin-top: 2.25rem; font-size: 0.75rem; color: var(--dusk); }
+
+/* ---------------- כפתור צף ---------------- */
+
+.agent-launcher {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  z-index: 50;
+  display: flex;
+  height: 4.25rem;
+  width: 4.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--dawn) 35%, transparent);
+  background: var(--night-lift);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.75);
+  transition: border-color 0.3s;
+}
+
+.agent-launcher:hover { border-color: color-mix(in srgb, var(--dawn) 70%, transparent); }
+
+.agent-launcher-glyph { height: 2rem; width: auto; }
+
+.agent-launcher::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  pointer-events: none;
+  animation: agent-ripple 2s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+@keyframes agent-ripple {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--dawn) 26%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--dawn) 0%, transparent); }
+}
+
+.agent-launcher:hover::after,
+.agent-launcher:focus-visible::after { animation: none; }
+
+/* ---------------- רספונסיביות ---------------- */
+
+@media (min-width: 640px) {
+  .hero-title { font-size: 3.5rem; }
+  .group-stats { grid-template-columns: repeat(4, 1fr); }
+  .register-card { padding: 2.25rem; }
+}
 
 @media (min-width: 700px) {
-  body {
-    font-size: 18px;
-  }
+  body { font-size: 18px; }
+  .section-title { font-size: 2.75rem; }
+}
 
-  main {
-    max-width: 760px;
-  }
+@media (min-width: 1024px) {
+  .hero { min-height: calc(100dvh - 3.4rem); }
+  .breath-nav-mobile { display: none; }
+  .breath-nav-desktop { display: block; }
+  .about-grid { grid-template-columns: 1.05fr 1fr; }
+}
 
-  section, header, footer {
-    padding: 3.5rem 2rem;
-  }
+@media (max-width: 640px) {
+  .agent-launcher { height: 3.4rem; width: 3.4rem; bottom: 0.85rem; left: 0.85rem; }
+  .agent-launcher-glyph { height: 1.5rem; }
+}
 
-  .hero {
-    min-height: calc(100dvh - 3.4rem);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-
-  .hero-kicker {
-    font-size: 0.85rem;
+  .breathes { transform: none; }
+  .breathes-glow { box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.6); }
+  .breath-ring, .option-breath {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--dawn) 30%, transparent);
   }
-
-  .tagline {
-    font-size: 1.25rem;
-  }
-
-  .contact-form form {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-
-  .contact-form button {
-    align-self: center;
-    padding-inline: 3rem;
-  }
+  .reveal { opacity: 1; transform: none; }
 }
