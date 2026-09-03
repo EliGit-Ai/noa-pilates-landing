@@ -13,7 +13,10 @@
   </div>
 
   <header class="hero">
-    <h1 class="business-name">נועה פילאטיס</h1>
+    <div class="hero-title-wrap">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <h1 class="business-name visually-hidden" id="business-name">נועה פילאטיס</h1>
+    </div>
     <p class="tagline">אימוני פילאטיס מזרן ברמת גן</p>
   </header>
 
@@ -109,6 +112,224 @@
     <p><a href="tel:0520000000">052-000-0000</a></p>
     <p><a href="mailto:noa@example.co.il">noa@example.co.il</a></p>
   </footer>
+
+  <script>
+    // מנוע חלקיקים לשם הסטודיו: דוגם את הטקסט לענן נקודות, מוסיף שדה אבק רקע
+    // (Fibonacci sphere), מסובב הכל בפסאודו-3D ומפעים בקצב נשימה איטי - נושא
+    // שמתכתב באופן ישיר עם פילאטיס. מגיב לתזוזת עכבר, ומכבד prefers-reduced-motion.
+    (function initHeroTitleField() {
+      const canvas = document.getElementById('hero-canvas');
+      const heading = document.getElementById('business-name');
+      if (!canvas || !heading) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const text = heading.textContent.trim();
+      const SAGE = '124, 143, 110';
+      const CLAY = '201, 123, 92';
+      const CREAM = '247, 243, 236';
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const finePointer = window.matchMedia('(pointer: fine)').matches && !reducedMotion;
+      const isMobile = window.matchMedia('(max-width: 640px)').matches;
+      const sampleStep = isMobile ? 3 : 2;
+
+      let particles = [];
+      let w = 0, h = 0, dpr = 1, scaleRef = 1;
+      let targetYaw = 0, targetPitch = 0, yaw = 0, pitch = 0;
+      let pointer = null;
+      let raf = null;
+      let visible = true;
+      let startTime = 0;
+
+      // "שדה כוכבים" - אבק רקע עדין מפוזר על כדור וירטואלי לפי זווית הזהב (Fibonacci sphere)
+      function generateStarField(count) {
+        const golden = Math.PI * (3 - Math.sqrt(5));
+        const stars = [];
+        for (let i = 0; i < count; i++) {
+          const yPos = 1 - (i / (count - 1)) * 2;
+          const radiusAtY = Math.sqrt(Math.max(0, 1 - yPos * yPos));
+          const theta = golden * i;
+          stars.push({
+            x: Math.cos(theta) * radiusAtY,
+            y: 0.7 * yPos,
+            z: Math.sin(theta) * radiusAtY,
+            tw: Math.random() * Math.PI * 2
+          });
+        }
+        return stars;
+      }
+      const stars = generateStarField(isMobile ? 40 : 70);
+
+      function sample() {
+        const off = document.createElement('canvas');
+        off.width = Math.max(1, Math.round(w));
+        off.height = Math.max(1, Math.round(h));
+        const octx = off.getContext('2d', { willReadFrequently: true });
+        octx.fillStyle = '#fff';
+        octx.textAlign = 'center';
+        octx.textBaseline = 'middle';
+        octx.font = `700 ${Math.round(off.height * 0.58)}px Georgia, 'Times New Roman', serif`;
+        octx.fillText(text, off.width / 2, off.height / 2 + off.height * 0.03);
+        const data = octx.getImageData(0, 0, off.width, off.height).data;
+
+        scaleRef = Math.max(off.width, off.height) / 2;
+        const pts = [];
+        for (let y = 0; y < off.height; y += sampleStep) {
+          for (let x = 0; x < off.width; x += sampleStep) {
+            if (data[(y * off.width + x) * 4 + 3] > 90) {
+              const nx = (x - off.width / 2) / scaleRef;
+              const ny = (y - off.height / 2) / scaleRef;
+              pts.push({
+                bx: nx,
+                by: ny,
+                curve: 0.85 * nx * nx + 0.5 * ny * ny + (Math.random() - 0.5) * 0.05,
+                tw: Math.random() * Math.PI * 2,
+                clay: Math.random() < 0.28,
+                ox: 0, oy: 0, vx: 0, vy: 0
+              });
+            }
+          }
+        }
+        particles = pts;
+      }
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = rect.width;
+        h = rect.height;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        sample();
+        if (reducedMotion) draw(0);
+      }
+
+      function onPointerMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+        targetYaw = nx * 0.3;
+        targetPitch = ny * 0.18;
+        pointer = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      }
+      function onPointerLeave() {
+        targetYaw = 0;
+        targetPitch = 0;
+        pointer = null;
+      }
+      if (finePointer) {
+        canvas.addEventListener('pointermove', onPointerMove, { passive: true });
+        canvas.addEventListener('pointerleave', onPointerLeave);
+      }
+
+      function draw(elapsed) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        if (!particles.length) return;
+
+        // מחזור נשימה איטי - שאיפה-נשיפה בת כ-7 שניות, כמו קצב אימון פילאטיס אמיתי
+        const breathe = reducedMotion ? 0.6 : 0.5 + 0.5 * Math.sin(elapsed * 0.0009);
+        const drift = reducedMotion ? 0 : 0.1 * Math.sin(elapsed * 0.00017);
+
+        yaw += (targetYaw + drift - yaw) * 0.05;
+        pitch += (targetPitch - pitch) * 0.05;
+
+        const cosYaw = Math.cos(yaw), sinYaw = Math.sin(yaw);
+        const cosPitch = Math.cos(pitch), sinPitch = Math.sin(pitch);
+        const cx = w / 2, cy = h / 2;
+        const PERSP = 3.2;
+
+        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.8);
+        glow.addColorStop(0, `rgba(${SAGE}, ${0.05 + 0.05 * breathe})`);
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, w, h);
+
+        const haloRadius = scaleRef * 1.6;
+        for (const s of stars) {
+          const rx = s.x * cosYaw + s.z * sinYaw;
+          let rz = -s.x * sinYaw + s.z * cosYaw;
+          const ry = s.y * cosPitch - rz * sinPitch;
+          rz = s.y * sinPitch + rz * cosPitch;
+
+          const depth = PERSP / (PERSP - rz);
+          const screenX = cx + rx * haloRadius * depth;
+          const screenY = cy + ry * haloRadius * depth;
+
+          const shimmer = reducedMotion ? 0.6 : 0.5 + 0.5 * Math.sin(elapsed * 0.0007 + s.tw);
+          const size = (0.4 + 0.5 * shimmer) * depth;
+          const alpha = Math.min(1, (0.1 + 0.18 * shimmer) * (0.6 + 0.4 * breathe));
+
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, Math.max(0.3, size), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${CREAM}, ${alpha})`;
+          ctx.fill();
+        }
+
+        for (const p of particles) {
+          const depthAmt = 0.35 + 0.25 * breathe;
+          const z = -p.curve * depthAmt;
+
+          const rx = p.bx * cosYaw + z * sinYaw;
+          let rz = -p.bx * sinYaw + z * cosYaw;
+          const ry = p.by * cosPitch - rz * sinPitch;
+          rz = p.by * sinPitch + rz * cosPitch;
+
+          const depth = PERSP / (PERSP - rz);
+          const screenX = cx + rx * scaleRef * depth;
+          const screenY = cy + ry * scaleRef * depth;
+
+          if (finePointer && pointer) {
+            const dx = screenX + p.ox - pointer.x;
+            const dy = screenY + p.oy - pointer.y;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 1225) {
+              const dist = Math.sqrt(distSq) || 1;
+              const force = (1 - dist / 35) * 2.0;
+              p.vx += (dx / dist) * force;
+              p.vy += (dy / dist) * force;
+            }
+          }
+          p.vx *= 0.86;
+          p.vy *= 0.86;
+          p.ox = (p.ox + p.vx) * 0.94;
+          p.oy = (p.oy + p.vy) * 0.94;
+
+          const shimmer = reducedMotion ? 0.75 : 0.55 + 0.45 * Math.sin(elapsed * 0.0016 + p.tw);
+          const size = (0.75 + 0.7 * shimmer) * depth;
+          const alpha = Math.min(1, (0.35 + 0.55 * shimmer) * (0.7 + 0.3 * breathe));
+          const color = p.clay ? CLAY : SAGE;
+
+          ctx.beginPath();
+          ctx.arc(screenX + p.ox, screenY + p.oy, Math.max(0.4, size), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color}, ${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      function loop(ts) {
+        if (!startTime) startTime = ts;
+        draw(ts - startTime);
+        if (visible) raf = requestAnimationFrame(loop);
+      }
+
+      const io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !reducedMotion && !raf) raf = requestAnimationFrame(loop);
+      });
+      io.observe(canvas);
+
+      const ro = new ResizeObserver(resize);
+      ro.observe(canvas);
+      resize();
+
+      if (!reducedMotion) {
+        raf = requestAnimationFrame(loop);
+      }
+    })();
+  </script>
 
   <script>
     var CONTACT_ENDPOINT = 'https://elik.app.n8n.cloud/webhook/noa-pilates-contact';
