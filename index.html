@@ -33,13 +33,7 @@
   </header>
 
   <div class="brand-badge" aria-hidden="true">
-    <svg viewBox="0 0 100 84" class="brand-badge-glyph">
-      <g class="brand-badge-stroke">
-        <path d="M50 6 C 50 22 50 30 50 38"/>
-        <path d="M50 38 C 34 22 12 26 6 42 C 0 60 16 76 34 72 C 48 69 52 54 50 38 Z"/>
-        <path d="M50 38 C 66 22 88 26 94 42 C 100 60 84 76 66 72 C 52 69 48 54 50 38 Z"/>
-      </g>
-    </svg>
+    <img class="brand-badge-glyph" src="assets/brand-glyph.png" alt="">
   </div>
 
   <main>
@@ -146,10 +140,18 @@
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const text = heading.textContent.trim();
       const GOLD = '226, 164, 93';
       const GOLD_PALE = '240, 205, 150';
       const IVORY = '243, 238, 228';
+
+      let glyphReady = false;
+      const glyphImg = new Image();
+      glyphImg.onload = function () {
+        glyphReady = true;
+        resize();
+        if (reducedMotion) draw(0);
+      };
+      glyphImg.src = 'assets/brand-glyph.png';
 
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const finePointer = window.matchMedia('(pointer: fine)').matches && !reducedMotion;
@@ -184,24 +186,19 @@
       const stars = generateStarField(isMobile ? 40 : 70);
 
       function sample() {
+        if (!glyphReady) return;
         const off = document.createElement('canvas');
         off.width = Math.max(1, Math.round(w));
         off.height = Math.max(1, Math.round(h));
         const octx = off.getContext('2d', { willReadFrequently: true });
-        octx.fillStyle = '#fff';
-        octx.textAlign = 'center';
-        octx.textBaseline = 'middle';
 
-        // הפונט נקבע לפי הגובה, אבל מוקטן אם המילים רחבות מדי לקנבס
-        let fontSize = off.height * 0.42;
-        const maxTextWidth = off.width * 0.86;
-        octx.font = `700 ${Math.round(fontSize)}px Georgia, 'Times New Roman', serif`;
-        const measured = octx.measureText(text).width;
-        if (measured > maxTextWidth) {
-          fontSize *= maxTextWidth / measured;
-          octx.font = `700 ${Math.round(fontSize)}px Georgia, 'Times New Roman', serif`;
-        }
-        octx.fillText(text, off.width / 2, off.height / 2 + off.height * 0.03);
+        // ממקם את גליף המותג במרכז, שומר על יחס הממדים המקורי שלו
+        const maxW = off.width * 0.72;
+        const maxH = off.height * 0.62;
+        const srcRatio = glyphImg.naturalWidth / glyphImg.naturalHeight;
+        let drawW = maxW, drawH = drawW / srcRatio;
+        if (drawH > maxH) { drawH = maxH; drawW = drawH * srcRatio; }
+        octx.drawImage(glyphImg, (off.width - drawW) / 2, (off.height - drawH) / 2, drawW, drawH);
         const data = octx.getImageData(0, 0, off.width, off.height).data;
 
         scaleRef = Math.max(off.width, off.height) / 2;

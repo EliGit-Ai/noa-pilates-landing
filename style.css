@@ -190,16 +190,9 @@ main {
 }
 
 .brand-badge-glyph {
-  width: 1.6rem;
-  height: auto;
-}
-
-.brand-badge-stroke {
-  fill: none;
-  stroke: #C9A27C;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  height: 1.5rem;
+  width: auto;
+  display: block;
 }
 
 @media (max-width: 640px) {
@@ -211,7 +204,7 @@ main {
   }
 
   .brand-badge-glyph {
-    width: 1.3rem;
+    height: 1.2rem;
   }
 }
 
