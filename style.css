@@ -74,19 +74,25 @@ main {
 /* כותרת */
 
 .hero {
-  text-align: center;
-  background-color: var(--color-bg-alt);
-}
-
-.business-name {
-  font-size: 1.9rem;
-}
-
-.hero-title-wrap {
+  --hero-bg: #16110E;
+  --hero-ivory: #F3EEE4;
+  --hero-gold: #E2A45D;
+  --hero-line: rgba(226, 164, 93, 0.35);
   position: relative;
-  height: 3.1rem;
-  margin: 0 auto 0.5em;
-  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 6rem);
+  padding: 0;
+  overflow: hidden;
+  text-align: center;
+  background-color: var(--hero-bg);
+}
+
+.hero-canvas-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 220px;
+  width: 100%;
 }
 
 #hero-canvas {
@@ -108,10 +114,105 @@ main {
   border: 0;
 }
 
+.hero-content {
+  flex-shrink: 0;
+  padding: 0 1.5rem 3rem;
+}
+
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  color: var(--hero-gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.4em;
+}
+
+.hero-kicker-line {
+  width: 2rem;
+  height: 1px;
+  background: linear-gradient(to left, var(--hero-line), transparent);
+}
+
+.hero-kicker-line:last-child {
+  background: linear-gradient(to right, var(--hero-line), transparent);
+}
+
+.hero-kicker-word {
+  display: inline-block;
+  min-width: 4em;
+  transition: opacity 0.5s ease;
+}
+
+.hero-kicker-word.is-swapping {
+  opacity: 0;
+}
+
 .tagline {
   font-size: 1.1rem;
-  color: var(--color-text-muted);
+  color: var(--hero-ivory);
   margin: 0;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--hero-gold);
+  opacity: 0.7;
+  animation: hero-scroll-bounce 2.2s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* תג הלוגו */
+
+.brand-badge {
+  position: fixed;
+  left: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background-color: #2A2018;
+  border: 1px solid rgba(226, 164, 93, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+}
+
+.brand-badge-glyph {
+  width: 1.6rem;
+  height: auto;
+}
+
+.brand-badge-stroke {
+  fill: none;
+  stroke: #C9A27C;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 640px) {
+  .brand-badge {
+    width: 2.8rem;
+    height: 2.8rem;
+    left: 0.85rem;
+    bottom: 0.85rem;
+  }
+
+  .brand-badge-glyph {
+    width: 1.3rem;
+  }
 }
 
 /* אודות */
@@ -258,12 +359,12 @@ main {
     padding: 3.5rem 2rem;
   }
 
-  .business-name {
-    font-size: 2.4rem;
+  .hero {
+    min-height: calc(100dvh - 3.4rem);
   }
 
-  .hero-title-wrap {
-    height: 3.8rem;
+  .hero-kicker {
+    font-size: 0.85rem;
   }
 
   .tagline {
