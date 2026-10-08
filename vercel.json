@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/course", "destination": "https://www.hayimsheli.com/course/", "permanent": true },
+    { "source": "/course/:path*", "destination": "https://www.hayimsheli.com/course/:path*", "permanent": true }
+  ]
+}
