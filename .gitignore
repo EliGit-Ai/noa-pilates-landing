@@ -11,3 +11,5 @@ desktop.ini
 # Local backups / temp
 *.bak
 *.tmp
+.vercel
+.env*
