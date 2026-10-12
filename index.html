@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500&family=Assistant:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261012">
+  <link rel="stylesheet" href="chat.css?v=20261012">
 </head>
 <body>
 
@@ -263,6 +264,7 @@
             <p>הסטודיו נמצא בקומה שנייה, ויש מעלית בבניין.</p>
           </details>
         </div>
+        <p class="faq-chat reveal">יש לכם שאלה אחרת על מחירים, מנויים או ביטולים? <button type="button" class="faq-chat-btn" data-open-chat>שאלו בצ'אט</button></p>
       </div>
     </section>
 
@@ -385,16 +387,49 @@
     </div>
   </footer>
 
-  <a
+  <section class="chat-panel" id="chat-panel" role="dialog" aria-labelledby="chat-title" hidden>
+    <header class="chat-head">
+      <img src="assets/brand-glyph.png" alt="" class="chat-head-glyph">
+      <div class="chat-head-text">
+        <h2 id="chat-title" class="chat-title">שאלות על הסטודיו</h2>
+        <p class="chat-sub">עונה לפי המחירון והתקנון של נועה</p>
+      </div>
+      <button type="button" class="chat-close" aria-label="סגירת הצ'אט">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="chat-log" aria-live="polite"></div>
+
+    <form class="chat-form" action="javascript:void(0)" novalidate>
+      <div class="honeypot" aria-hidden="true">
+        <label for="chat-website">אתר</label>
+        <input type="text" id="chat-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+      <label for="chat-input" class="visually-hidden">השאלה שלך</label>
+      <div class="chat-input-row">
+        <textarea id="chat-input" rows="1" maxlength="500" dir="auto" placeholder="כתבו שאלה…" autocomplete="off"></textarea>
+        <button type="submit" class="chat-send" aria-label="שליחה">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg>
+        </button>
+      </div>
+      <p class="chat-form-error" role="alert" hidden></p>
+      <p class="chat-foot">הבוט לא רושם לשיעורים ולא רואה נתוני מנוי אישיים. לשאלה אישית: <a href="https://wa.me/972520000000" target="_blank" rel="noopener">וואטסאפ לנועה</a></p>
+    </form>
+  </section>
+
+  <button
+    type="button"
     class="agent-launcher"
-    href="https://wa.me/972520000000"
-    target="_blank"
-    rel="noopener"
-    aria-label="פנייה בוואטסאפ"
+    id="chat-launcher"
+    aria-controls="chat-panel"
+    aria-expanded="false"
+    aria-label="שאלות על הסטודיו — פתיחת צ'אט"
   >
     <img src="assets/brand-glyph.png" alt="" class="agent-launcher-glyph">
-  </a>
+  </button>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20261012"></script>
+  <script src="chat.js?v=20261012"></script>
 </body>
 </html>
