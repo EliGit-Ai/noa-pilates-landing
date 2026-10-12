@@ -5,6 +5,7 @@
      POST  /webhook/noa-chat         { message, sessionId, website }
        200 → { jobId, status: "pending" }
        400 → { error, field }                     (הודעה בעברית למשתמש)
+       429 → { error, field: "limit" }            (20 לשיחה, 30 לכתובת IP, 300 ביום)
      GET   /webhook/noa-chat-status?jobId=…
        200 → { jobId, status: "pending"|"done"|"error"|"not_found", stage, result: { reply } }
    --------------------------------------------- */
@@ -68,7 +69,8 @@
       .catch(function () { throw new JobError(navigator.onLine ? "unreachable" : "offline"); })
       .then(function (res) {
         return res.json().catch(function () { return null; }).then(function (data) {
-          if (res.status === 400 && data && data.error) throw new JobError("invalid", data);
+          // 400 = קלט לא תקין, 429 = הגעתם למגבלת השאלות. בשני המקרים מציגים את ההודעה מהשרת כמו שהיא.
+          if ((res.status === 400 || res.status === 429) && data && data.error) throw new JobError("invalid", data);
           if (!res.ok || !data) throw new JobError("server");
           return data;
         });
