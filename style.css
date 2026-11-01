@@ -1034,3 +1034,38 @@ a { color: inherit; text-decoration: none; }
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+/* A soft diagonal light sweep, clipped to the button shape. */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: -45%;
+  width: 32%;
+  background: linear-gradient(105deg, transparent 12%, rgba(255, 246, 222, 0.12) 35%, rgba(255, 255, 255, 0.48) 50%, rgba(255, 246, 222, 0.12) 65%, transparent 88%);
+  transform: translateX(0) skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+  animation: button-lightning-sweep 5.5s ease-in-out infinite;
+}
+
+.btn--quiet::after { animation-delay: 0.45s; }
+
+@keyframes button-lightning-sweep {
+  0%, 68% { transform: translateX(0) skewX(-18deg); opacity: 0; }
+  72% { opacity: 0.75; }
+  88% { transform: translateX(520%) skewX(-18deg); opacity: 0.75; }
+  89%, 100% { transform: translateX(520%) skewX(-18deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::after { display: none; animation: none; }
+}
